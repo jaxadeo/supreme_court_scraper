@@ -2,12 +2,12 @@ import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 
+
 def find_cases(year):
     url = "https://caselaw.findlaw.com/court/us-supreme-court/years/" + year
     page = requests.get(url)
     soup = bs(page.content, 'html.parser')
     table = soup.find('table', attrs={'class': 'responsive-card-table unstriped'})
-    table_heads = table.find_all('th')
     table_rows = table.find_all('tr')
     links = table.find_all('a', href=True)
     links = [link.get("href") for link in links]
@@ -17,8 +17,6 @@ def find_cases(year):
         row = [tr.text for tr in td]
         l.append(row)
     l.pop(0)
-    df = pd.DataFrame(l)
+    df = pd.DataFrame(l,columns=["Description", "Date", "Docket Number"])
     df['Link'] = links
     return(df)
-
-print(find_cases("2018"))
